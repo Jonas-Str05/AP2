@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AP2 Lernstand</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Inter:wght@400;500&display=swap">
+<style>
+/* Layout: Schriftmuster als Reiseführer. Signalrote Vollfläche, schwarze Groteske in Plakatgröße, Haarlinien und Spezifikationstabellen; Übersicht als schwarzer Block */
+:root{
+  --bg:#EE4337; --fg:#1A1A1A; --hi:#EBEBEB; --ink:#000000; --warm:#F0E7D4; --link:#0000EE;
+  --muted:rgba(26,26,26,.68); --line:rgba(26,26,26,.35); --track:rgba(26,26,26,.18);
+  --ink-line:rgba(240,231,212,.25); --ink-muted:rgba(240,231,212,.62); --ink-track:rgba(240,231,212,.16);
+  --go:#5CC97E; --hl:#EBEBEB;
+  --amp-r:#8E140B; --amp-y:#F6C343; --amp-g:#1E7A3E;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --text:"Inter","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0B0A; --fg:#F0E7D4; --hi:#EE4337; --ink:#1A1918; --warm:#F0E7D4; --link:#8FA8FF;
+    --muted:rgba(240,231,212,.62); --line:rgba(240,231,212,.28); --track:rgba(240,231,212,.14);
+    --ink-line:rgba(240,231,212,.22); --ink-muted:rgba(240,231,212,.6); --ink-track:rgba(240,231,212,.14);
+    --go:#5CC97E; --hl:#4A1712;
+    --amp-r:#EE4337; --amp-y:#F6C343; --amp-g:#4FB86E; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0B0A; --fg:#F0E7D4; --hi:#EE4337; --ink:#1A1918; --warm:#F0E7D4; --link:#8FA8FF;
+  --muted:rgba(240,231,212,.62); --line:rgba(240,231,212,.28); --track:rgba(240,231,212,.14);
+  --ink-line:rgba(240,231,212,.22); --ink-muted:rgba(240,231,212,.6); --ink-track:rgba(240,231,212,.14);
+  --go:#5CC97E; --hl:#4A1712;
+  --amp-r:#EE4337; --amp-y:#F6C343; --amp-g:#4FB86E; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.35 var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.in{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.muted{color:var(--muted)}
+.tn{font-variant-numeric:tabular-nums}
+.lab{font-size:12px;font-weight:400;margin:0 0 24px;color:var(--fg)}
+.rule{height:1px;background:var(--fg);border:0;margin:0}
+
+/* Kopf */
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding-block:24px}
+.mono{width:44px;height:44px;border-radius:10px;background:var(--fg);color:var(--bg);display:grid;place-items:center;font:700 15px/1 var(--display);letter-spacing:-.5px}
+.nav{display:flex;gap:24px;background:var(--hi);color:#1A1A1A;border-radius:999px;padding:11px 22px;font-size:12px}
+.nav a{color:inherit;text-decoration:none}
+.nav a:hover{text-decoration:underline;text-underline-offset:3px}
+.top-r{display:flex;gap:16px;align-items:center;justify-content:flex-end;font-size:12px;min-width:0}
+#sync{color:var(--muted);text-align:right}
+#sync[data-s="err"]{color:var(--fg);text-decoration:underline}
+.pill{background:var(--fg);color:var(--bg);border-radius:999px;padding:11px 18px;font-size:12px;white-space:nowrap}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:start;padding-block:48px 24px}
+.hero h1{font:700 clamp(58px,11.2vw,150px)/.88 var(--display);letter-spacing:clamp(-4px,-.03em,-1.5px);color:var(--hi);margin:0;animation:up .3s ease-out both}
+.orn{width:clamp(76px,13vw,168px);aspect-ratio:1;max-width:100%;animation:spin 30s linear infinite}
+.orn text{font:500 11.5px var(--display);letter-spacing:1.4px;fill:var(--fg)}
+.intro{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;padding-block:24px 160px}
+.intro p{grid-column:1/span 6;margin:0;font-size:clamp(19px,2vw,24px);line-height:1.08;letter-spacing:-.03em}
+.intro .date{grid-column:10/span 3;font-size:12px;letter-spacing:0;line-height:1.35}
+.mark{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;padding-block:12px 96px}
+.mark .num{font:700 clamp(96px,23vw,330px)/.78 var(--display);letter-spacing:-.045em;color:var(--fg);margin:0;white-space:nowrap}
+.mark .num small{font-size:.42em;letter-spacing:-.03em}
+.spec{border-collapse:collapse;font-size:13px;line-height:1.35;min-width:230px}
+.spec td{padding:5px 0;border-top:1px solid var(--line)}
+.spec tr:first-child td{border-top:1px solid var(--fg)}
+.spec td+td{text-align:right;padding-left:24px}
+
+/* Schwarzer Block: Übersicht */
+.blk{background:var(--ink);color:var(--warm);padding-block:96px}
+.blk .lab{color:var(--warm)}
+.blk .muted,.blk .num-s{color:var(--ink-muted)}
+.blk h2{font:700 clamp(44px,6.4vw,74px)/.9 var(--display);letter-spacing:-2px;margin:0 0 48px;text-wrap:balance}
+.tot{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:baseline;margin-bottom:96px}
+.tot .big{font:700 clamp(56px,7vw,96px)/.9 var(--display);letter-spacing:-2px}
+.tot .bar{grid-column:1/-1}
+.ovk{margin-bottom:72px}
+.ovk:last-child{margin-bottom:0}
+.ovk-h{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:baseline;padding-bottom:12px;border-bottom:1px solid var(--warm)}
+.ovk-h h3{margin:0;font:700 clamp(26px,3.4vw,40px)/1 var(--display);letter-spacing:-1px;text-wrap:balance}
+.ovk-h h3 span{color:var(--ink-muted);font-weight:500}
+.ovk-h .p{font:700 clamp(22px,2.4vw,28px)/1 var(--display)}
+.blocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px}
+.bk{display:grid;grid-template-columns:3em minmax(0,1fr) auto;gap:6px 10px;padding:14px 0 12px;align-items:baseline;width:100%;font-size:13px;line-height:1.35}
+.bk .t{overflow-wrap:anywhere}
+.bk .bar{grid-column:1/-1}
+.bk:hover .t{text-decoration:underline;text-underline-offset:3px}
+.bar{height:3px;background:var(--track);position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--fg)}
+.blk .bar{background:var(--ink-track)}
+.blk .bar i{background:var(--go)}
+.tot .bar{height:6px}
+
+/* Angeheftet */
+.sec{padding-block:96px 0}
+.pblocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 24px;margin-bottom:24px}
+.pb{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px 10px;align-items:baseline;padding:12px 0;border-top:1px solid var(--fg);font-size:13px}
+.pb .bar{grid-column:1/-1}
+.pb .go{font-size:12px;text-decoration:underline;text-underline-offset:3px}
+
+/* Filter */
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;padding:14px 0;border-bottom:1px solid var(--fg);border-top:1px solid var(--fg);font-size:12px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.filters select,.filters input[type=search]{font:inherit;font-size:13px;color:var(--fg);background:transparent;border:0;border-bottom:1px solid var(--fg);padding:5px 2px;border-radius:0;max-width:100%}
+.filters select{cursor:pointer;background-color:var(--bg)}
+.filters select option{background-color:var(--hi);color:#1A1A1A}
+.filters input[type=search]::placeholder{color:var(--muted)}
+.filters input[type=search]{flex:1 1 180px;min-width:0}
+.filters label{display:flex;gap:8px;align-items:center;min-width:0;max-width:100%}
+.filters label select{min-width:0;flex:1 1 auto}
+#f-b{max-width:260px}
+.tgl{display:flex;gap:8px;align-items:center;font-size:12px}
+.fcount{color:var(--muted);margin-left:auto}
+.reset{font-size:12px;text-decoration:underline;text-underline-offset:3px}
+
+/* Liste */
+.kh{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-top:96px;padding-bottom:12px;border-bottom:1px solid var(--fg)}
+.kh h2{font:700 clamp(40px,6.4vw,74px)/.9 var(--display);letter-spacing:-2px;margin:0;text-wrap:balance}
+.kh h2 span{display:block;font-size:.42em;letter-spacing:-.5px;font-weight:500;margin-top:10px;color:var(--hi)}
+.kh .p{font:700 clamp(24px,3vw,40px)/1 var(--display);letter-spacing:-1px}
+.colh{display:grid;grid-template-columns:minmax(0,1fr) auto;padding:12px 0 0}
+.bh{display:flex;gap:12px;align-items:baseline;padding:48px 0 10px}
+.bh h3{flex:1;margin:0;font:700 clamp(20px,2.2vw,26px)/1.05 var(--display);letter-spacing:-.6px;min-width:0}
+.bh .num{width:3.6em}
+.bh .p{font-size:13px}
+.bcol{width:1em;flex:none;transition:transform .15s}
+.bcol[aria-expanded="false"]{transform:rotate(-90deg)}
+.num{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;flex:none;width:3.6em}
+.row{border-top:1px solid var(--line)}
+.r-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:10px 0}
+.r-main{display:flex;gap:12px;align-items:baseline;min-width:0;width:100%;font-size:15px}
+.r-main .ttl{min-width:0}
+.r-main:hover .ttl{text-decoration:underline;text-underline-offset:3px}
+.dc{font-size:12px;color:var(--muted);white-space:nowrap}
+.ctl{display:grid;grid-template-columns:repeat(3,92px) 86px 30px;align-items:center;justify-items:center}
+.ctl.head span{font-size:12px;color:var(--muted)}
+.ck{display:flex;gap:8px;align-items:center;padding:4px}
+.ck .lbl{display:none;font-size:13px}
+.box{width:15px;height:15px;border:1px solid var(--fg);display:inline-grid;place-items:center;flex:none}
+[aria-pressed="true"]>.box{background:var(--fg)}
+[aria-pressed="true"]>.box::after{content:"";width:4px;height:8px;border:solid var(--bg);border-width:0 1.5px 1.5px 0;transform:translateY(-1px) rotate(45deg)}
+.amp{display:flex;gap:7px}
+.dot{width:15px;height:15px;border-radius:50%;border:1px solid var(--fg);background:transparent}
+.dot.r[aria-pressed="true"]{background:var(--amp-r)}
+.dot.y[aria-pressed="true"]{background:var(--amp-y)}
+.dot.g[aria-pressed="true"]{background:var(--amp-g)}
+.dot:not([aria-pressed="true"]):hover{background:var(--track)}
+.pin{width:28px;height:28px;display:grid;place-items:center;color:var(--muted)}
+.pin svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.4}
+.pin[aria-pressed="true"]{color:var(--fg)}
+.pin[aria-pressed="true"] svg{fill:currentColor}
+.note{margin:-2px 0 12px calc(3.6em + 12px);font-size:14px;line-height:1.35;color:var(--fg);white-space:pre-wrap;overflow-wrap:anywhere;border-left:1px solid var(--fg);padding-left:10px}
+.more{padding:2px 0 24px calc(3.6em + 12px)}
+.det{list-style:none;margin:0;padding:0;columns:2 300px;column-gap:24px}
+.det li{break-inside:avoid;padding:3px 0}
+.dk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.35}
+.dk .box{width:13px;height:13px;margin-top:2px}
+.dk[aria-pressed="true"] .tx{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.hit .tx{background:var(--hl)}
+.more-act{display:flex;gap:24px;margin-top:12px}
+.more-act button{font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.more textarea{display:block;width:100%;min-height:76px;margin-top:12px;font:13px/1.35 var(--text);color:var(--fg);background:transparent;border:1px solid var(--fg);padding:8px 10px;resize:vertical;border-radius:0}
+.none{padding:48px 0;color:var(--muted)}
+footer{margin-top:160px;padding-block:14px 48px;border-top:1px solid var(--fg);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  .blocks,.pblocks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .intro p{grid-column:1/-1}
+  .intro .date{grid-column:1/-1}
+  .mark{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .top{grid-template-columns:auto 1fr}
+  .nav{display:none}
+  .hero{grid-template-columns:1fr auto}
+  .intro{padding-block:24px 96px}
+  .blocks,.pblocks{grid-template-columns:minmax(0,1fr)}
+  .r-line{grid-template-columns:minmax(0,1fr)}
+  .ctl{display:flex;flex-wrap:wrap;gap:6px 16px;justify-items:start}
+  .filters label{flex:1 1 100%}
+  #f-b{max-width:none}
+  .ctl.head{display:none}
+  .ck .lbl{display:inline}
+  .amp{padding:4px 0}
+  .pin{margin-left:auto}
+  .more{padding-left:0}
+  .note{margin-left:0}
+  .fcount{margin-left:0;width:100%}
+  .spec{min-width:0;width:100%}
+  .blk{padding-block:72px}
+}
+@media (prefers-reduced-motion:reduce){.bcol{transition:none}.orn,.hero h1{animation:none}}
+@media print{
+  html:root:not([data-x]):not([data-y]){--bg:#fff;--fg:#000;--muted:#555;--line:#bbb;--track:#ddd;--hi:#000;--ink:#fff;--warm:#000;--ink-line:#bbb;--ink-muted:#555;--ink-track:#ddd;--go:#000;--hl:transparent;color-scheme:light}
+  body::after,.top,.orn,.filters,.pin,.bcol,.more-act,#pinned,#overview .blocks,footer{display:none!important}
+  .blk{padding-block:24px}
+  .row,.bh{break-inside:avoid}
+  .kh{break-after:avoid}
+  .dot,[aria-pressed="true"]>.box,.bar i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
+<header class="top in">
+  <div class="mono" aria-hidden="true">A2</div>
+  <nav class="nav" aria-label="Abschnitte">
+    <a href="#overview">Übersicht</a><a href="#pinned">Angeheftet</a><a href="#themen">Themen</a>
+  </nav>
+  <div class="top-r">
+    <span id="sync" aria-live="polite">Lädt …</span>
+    <button id="theme" class="pill" type="button" aria-label="Darstellung wechseln">Darstellung: Auto</button>
+  </div>
+</header>
+
+<div class="in" id="count"></div>
+
+<section id="overview" class="blk" aria-labelledby="ov-h">
+  <div class="in">
+    <h2 id="ov-h">Übersicht</h2>
+    <div id="ov"></div>
+  </div>
+</section>
+
+<section id="pinned" class="sec in" aria-labelledby="pin-h">
+  <h2 class="lab" id="pin-h">Angeheftet</h2>
+  <div id="pins"></div>
+</section>
+
+<section id="themen" class="sec in" aria-labelledby="th-h">
+  <h2 class="lab" id="th-h">Themen</h2>
+  <div class="filters" role="search">
+    <div class="seg" id="f-k" aria-label="Klausur"></div>
+    <label><span class="muted">Block</span><select id="f-b"></select></label>
+    <label><span class="muted">Status</span>
+      <select id="f-st">
+        <option value="all">Alle</option>
+        <option value="open">Noch offen</option>
+        <option value="na">Nicht angeschaut</option>
+        <option value="nl">Ohne Lernzettel</option>
+        <option value="nu">Ohne Aufgaben</option>
+        <option value="done">Fertig</option>
+      </select></label>
+    <label><span class="muted">Ampel</span>
+      <select id="f-amp">
+        <option value="all">Alle</option>
+        <option value="none">Nicht bewertet</option>
+        <option value="r">Rot</option>
+        <option value="y">Gelb</option>
+        <option value="g">Grün</option>
+      </select></label>
+    <input type="search" id="f-q" placeholder="Suchen, z. B. RAID, Netzplan, DSGVO" aria-label="Themen durchsuchen">
+    <button type="button" class="tgl" id="f-pin" aria-pressed="false"><span class="box"></span>Nur angeheftete</button>
+    <button type="button" class="reset" id="f-reset">Filter zurücksetzen</button>
+    <span class="fcount tn" id="f-count"></span>
+  </div>
+  <div id="list"></div>
+</section>
+
+<footer class="in">
+  <span>Fertig heißt: angeschaut, Lernzettel, Aufgaben gemacht und Ampel auf Grün.</span>
+  <span>Drucken: lokale HTML-Datei öffnen und Strg + P drücken</span>
+</footer>
+
+<script>
+const DATA = [{"t":"Klausur 1: Einführung einer IT-Systemlösung","b":[{"n":"1.1","t":"IT-Sicherheit und Datenschutz","s":[{"n":"1.1.1","t":"Schutzziele","d":["Vertraulichkeit","Integrität","Verfügbarkeit","Authentizität"]},{"n":"1.1.2","t":"Schadenspotenziale","d":["Imageschaden","Wirtschaftlicher Schaden","Datenverlust"]},{"n":"1.1.3","t":"Bedrohungsszenarien","d":["Datendiebstahl","Digitale Erpressung (Ransomware)","Identitätsdiebstahl (Phishing)","Man-in-the-Middle","SQL-Injection","DDoS-Attack"]},{"n":"1.1.4","t":"IT-Sicherheitskonzepte \u0026 Vorgaben","d":["Security by Design","IT-Grundschutzmodellierung nach BSI","Funktionale Anforderungen","Qualitätsanforderungen","Technisch Organisatorische Maßnahmen (TOM)","Ziele von IT-Sicherheitskriterien (Richtschnur für Entwickler, objektive Bewertung der Systeme, Hilfe bei der Produktauswahl)"]},{"n":"1.1.5","t":"Analyse und Überprüfung","d":["Risikoanalyse","Penetrations-Test","Device Security Check","Identity \u0026 Access Management","Schwachstellenanalyse","Wirksamkeit und Effizienz der TOM prüfen"]},{"n":"1.1.6","t":"Kundenberatung zur IT-Sicherheit","d":["Zielgruppen: Private Haushalte, Unternehmen (intern, extern), Öffentliche Hand","Rahmenbedingungen: technologisch, organisatorisch, rechtlich, ethisch"]},{"n":"1.1.7","t":"Kontrollmechanismen","d":["Zutrittskontrolle (Alarmanlage, Videoüberwachung, Besucherausweise)","Zugangskontrolle (Bildschirmschoner mit Passwortschutz, Biometrische Verfahren, Magnet- oder Chipkarte)","Zugriffskontrolle (Verschlüsselung von Datenträgern, Löschung von Datenträgern, User/Rollenkonzept)"]},{"n":"1.1.8","t":"Monitoring \u0026 Rechtliches","d":["Log Management","Compliance Reports","Kundendaten (Speicherung, Verwertung)","BDSG","DSGVO","GoBD"]}]},{"n":"1.2","t":"Projektmanagement","s":[{"n":"1.2.1","t":"Projektplanung und -steuerung","d":["Machbarkeitsanalyse","Terminplanung","Ressourcenplanung","Kapazitäten"]},{"n":"1.2.2","t":"Methoden und Modelle","d":["DevOps","Kanban-Methode","Agiles Projektmanagement"]},{"n":"1.2.3","t":"Werkzeuge und Dokumentation","d":["PM-Tools","Arbeitspläne","Arbeitsprotokolle"]},{"n":"1.2.4","t":"Netzplan","d":["FAZ, FEZ, SAZ, SEZ","Gesamtpuffer (GP = SAZ - FAZ)","Freier Puffer (FP = FAZ Nachfolger - FEZ)","Kritischer Weg"]},{"n":"1.2.5","t":"Abstimmungsprozesse","d":["Kooperation, Kollaboration, Transparenz","Servicemanagement"]}]},{"n":"1.3","t":"Systemarchitektur \u0026 Komponenten","s":[{"n":"1.3.1","t":"Bewertungskriterien von IT-Systemen","d":["Leistungsfähigkeit","Funktionalität","Wirtschaftlichkeit","Erweiterbarkeit"]},{"n":"1.3.2","t":"Softwarearchitekturen","d":["Integrierte Unternehmenssoftware","Digitale Ökosysteme","Digitale Plattformen"]},{"n":"1.3.3","t":"Hardware-Komponenten","d":["Clients","Peripheriegeräte","Zubehör","Server"]},{"n":"1.3.4","t":"Netzwerk-Komponenten","d":["Switch","Router","Firewall","Stateful Inspection Firewall","Next Generation Firewall","Accesspoint"]},{"n":"1.3.5","t":"Organisationsstrukturen","d":["Aufbauorganisation","Ablauforganisation","Wertschöpfungskette"]}]},{"n":"1.4","t":"Netzwerke \u0026 Kommunikation","s":[{"n":"1.4.1","t":"Netzwerkinfrastruktur","d":["Kabelgebunden","Kabellos (WLAN)"]},{"n":"1.4.2","t":"Netzwerkkomponenten und -dienste","d":["Passive Komponenten","Aktive Komponenten","Netzwerkdienste","Verbindungen zu öffentlichen Netzen"]},{"n":"1.4.3","t":"Speichersysteme und Ausfallsicherheit","d":["RAID 0, 1, 5, 6, 10","NAS","SAN"]},{"n":"1.4.4","t":"Protokolle und Modelle","d":["ISO/OSI-Layer 2","ISO/OSI-Layer 3","NAT/PAT","IPv4","IPv6","LAN"]},{"n":"1.4.5","t":"Netzwerkplanung","d":["Netzwerkpläne lesen und erstellen","Nutzer- und Zugriffsrechte","Automation, Monitoring, Administration"]},{"n":"1.4.6","t":"Datenmengen und Präfixe","d":["Binärpräfixe: KiB, MiB, GiB, TiB (Basis 2)","Dezimalpräfixe: kB, MB, GB, TB (Basis 10, für physikalische Größen)","Datenmengen immer mit Binärpräfixen angeben"]}]},{"n":"1.5","t":"Cloud \u0026 Betriebskonzepte","s":[{"n":"1.5.1","t":"Cloud und Online-Dienste","d":["Cloudsysteme","Clouddienste","Onlinedienste","B2B Plattformdienste","IT-Services"]},{"n":"1.5.2","t":"Digitale Konzepte und Automation","d":["Digitale Lösungsvarianten","Wertschöpfungsnetzwerke","Künstliche Intelligenz (KI)","Digitaler Zwilling","Automation","Neue Arbeitsformen","Digitale Assistenzsysteme","Prädiktive Instandhaltung"]},{"n":"1.5.3","t":"Betriebliche Informationssysteme","d":["Referenzmodell Industrie 4.0 (RAMI 4.0)","ERP","PLM","APS","SCM","SRM","EDI"]},{"n":"1.5.4","t":"Digitale Beschaffungs- und Betriebsprozesse","d":["E-Procurement","E-Kanban-System","eSourcing","Purchase-to-Pay","Source-to-Pay","VMI, SMI","Smart Contracts, digitalisierte Verträge"]}]},{"n":"1.6","t":"Lizenzmodelle","s":[{"n":"1.6.1","t":"Lizenzarten","d":["EULA","OEM-Lizenz","GNU GPL / Open Source","Proprietäre Software","Pay-per-Use","Software-Abo / Subscription"]},{"n":"1.6.2","t":"Lizenzierung","d":["Lizenzierung von Software und Netzwerkdiensten","Grundlagen des Urheberrechts"]}]},{"n":"1.7","t":"Softwareentwicklung","s":[{"n":"1.7.1","t":"Fehler erkennen und beheben","d":["Debugging, Breakpoint, Ablaufverfolgung","Versionsmanagement des Quellcodes"]},{"n":"1.7.2","t":"Softwaretest","d":["Statische und dynamische Testverfahren","Black Box, White Box, Review, Extremwertetest","Komponententest, Integrationstest, Systemtest","Last- und Performancetest","Testdaten, Testdatengeneratoren"]},{"n":"1.7.3","t":"Algorithmen","d":["Pseudocode","Aktivitätsdiagramm"]},{"n":"1.7.4","t":"UML","d":["Anwendungsfalldiagramm (Akteur, include, extend)","Klassendiagramm (Attribute, Methoden, Sichtbarkeit + # - ~)","Beziehungen (Vererbung, Assoziation, Aggregation, Komposition, Multiplizität, Interface)","Aktivitätsdiagramm (Start-/Endknoten, Teilung/Synchronisation, Entscheidung, Schwimmbahnen)"]},{"n":"1.7.5","t":"Bildschirmmasken","d":["Softwareergonomie","Barrierefreiheit"]}]},{"n":"1.8","t":"Anforderungsanalyse \u0026 Geschäftsprozesse","s":[{"n":"1.8.1","t":"Anforderungsanalyse","d":["Lasten- und Pflichtenheft (Zweck, Ersteller, Inhalt)","Anforderungsdefinition und -dokumentation","Methoden der Ist-Analyse (Interview, Fragebogen, Beobachtung, Dokumentenanalyse)","Zielbezogene Anforderungsanalyse","KPI-Vergleich von Lösungsvarianten"]},{"n":"1.8.2","t":"Geschäftsprozesse darstellen","d":["Wertschöpfungs- und Geschäftsprozesse","BPMN (Task, Events, Gateways XOR/OR/AND, Pools und Lanes)","EPK (Ereignis, Funktion, Organisationseinheit, Konnektoren UND/XOR/ODER)","Kommunikation und organisatorische Schnittstellen"]},{"n":"1.8.3","t":"Digitalisierung","d":["Digitalisierung, digitale Transformation, digitale Disruption","Unternehmensziele"]},{"n":"1.8.4","t":"IT-Systeme bewerten","d":["Arten von IT-Systemen","Auswahlkriterien, Normen, Zertifikate, Kennzeichnungen","Integriertes Managementsystem (Qualität, Sicherheit, Nachhaltigkeit)","Green IT"]},{"n":"1.8.5","t":"Datenanalyse","d":["Einsatzbereiche und Methoden der Datenanalyse","Datenanalyse-Plattformen und -tools","Einsatz von Software, Diensten und KI"]}]}]},{"t":"Klausur 2: Kaufmännische Unterstützungsprozesse","b":[{"n":"1.9","t":"Wirtschaftlichkeit","s":[{"n":"1.9.1","t":"Analyseverfahren","d":["Kosten-Nutzen-Analyse","Rentabilitätsberechnung","SWOT-Analyse","Make or buy","Deckungsbeitrag I"]},{"n":"1.9.2","t":"Kennzahlen und Vergleiche","d":["Zeitvergleich","Kosten, Nutzen, Überschuss","Rentabilität","ROI","ROA","Amortisation","Cashflow","Liquiditätskennzahlen","Eigenkapitalquote","Fremdkapitalquote","Verschuldungsgrad","KPI, KPI-Vergleich","Prozentanteil","Wirtschaftlichkeit"]},{"n":"1.9.3","t":"Kalkulation","d":["Kosten für Eigen- und Fremdleistungen","Selbstkostenkalkulation","Handelswarenkalkulation","Zuschlagskalkulation","Stundensatzermittlung","Gewinnschwelle","Preisuntergrenze","Bezugskalkulation","Stunden- und Tagessätze","Bereitschaftszeiten (Wartungs- und Serviceverträge)"]},{"n":"1.9.4","t":"Finanzierung","d":["Innenfinanzierung","Außenfinanzierung","Selbstfinanzierung","Einlagenfinanzierung","Beteiligungsfinanzierung","Darlehensarten","Leasing","Miete"]},{"n":"1.9.5","t":"Rechnungswesen und Buchführung","d":["Inventur, Bilanz, GuV","Einzahlung, Einnahme, Ertrag","Auszahlung, Ausgabe, Aufwand","Bestands- und Erfolgskonten","Umsatzsteuer, Zahllast","Bonus, Skonto, Bezugskosten","Abschreibungen, GWG","Eingangs- und Ausgangsrechnungen prüfen (rechnerisch, sachlich, buchungstechnisch)","Vorsteuer","Rechnungsbeleg auswerten (Rabatt, Skonto, USt)"]},{"n":"1.9.6","t":"Kosten- und Leistungsrechnung","d":["Einzel- und Gemeinkosten","Fixe und variable Kosten","Kostenstellen","Kostenträger","Einstufiger BAB","Betriebsergebnis"]},{"n":"1.9.7","t":"Forderungsmanagement","d":["Forderungsüberwachung","OP-Listen","Mahnwesen","Factoring","Überwachung der Fälligkeiten","Zahlungsverzug"]},{"n":"1.9.8","t":"Daten für das Rechnungswesen","d":["Datenquellen ermitteln","Schnittstellen","Auswertungsmöglichkeiten (z. B. für die Preiskalkulation)"]}]},{"n":"1.10","t":"Marketing","s":[{"n":"1.10.1","t":"Markt- und Kundenanalyse","d":["Wettbewerbsbeobachtung","Trendforschung","Marktanalyse","Kundenpotenzialanalyse","Kundenwert","Segmentierung von Kundengruppen","Kundendatenanalyse","Marktbeobachtung (laufend) vs. Marktanalyse (Zeitpunkt)","Analyse der Kundenstruktur","Kundenbedürfnisse, Kundennutzen","Interne und externe Informationsquellen"]},{"n":"1.10.2","t":"Marketingstrategien","d":["Wettbewerbsstrategien (Kostenführerschaft, Qualitätsführerschaft, Differenzierung, Nischenstrategie)","Benchmarking","Analyseverfahren (Portfolioanalyse, Lebenszyklusmodell, SWOT-Analyse)"]},{"n":"1.10.3","t":"Marketingmix","d":["Preis- und Konditionenpolitik","Produkt- und Sortimentspolitik","Kommunikationspolitik","Distributionspolitik"]},{"n":"1.10.4","t":"Marketingmaßnahmen","d":["Werbung","Sales Promotion","Öffentlichkeitsarbeit (PR)","Sponsoring","Produktplatzierung","Direktmarketing","E-Mail-Marketing","Onlinemarketing","Inbound-/Outboundmarketing","Evaluation durchgeführter Maßnahmen","Marketing-Apps, Clouddienste für Marketing"]},{"n":"1.10.5","t":"Kundenbeziehung und Vertrieb","d":["Neukundengewinnung","CRM (Customer Relationship Management)","Kundenzufriedenheit","After-Sales-Service","Vertriebswege (direkt, indirekt)","Logistik","Kundenpflege, Kundenbindung, Kundenreaktivierung","Zielgruppengerechte Leistungsbündel","Kundenbefragung, Kundenfeedback","Vertriebswege stationär und online","Kosten der Distributionskanäle","Logistikplattformen","Digitale Anwendungsfälle des After-Sales-Marketings"]},{"n":"1.10.6","t":"E-Commerce","d":["E-Business","B2B, B2C, B2A","Marketplaces","Digitale Plattformen"]}]},{"n":"1.11","t":"Datenbanken","s":[{"n":"1.11.1","t":"Datenbankmodelle","d":["Relationale Datenbanken","Nicht-relationale Datenbanken","NoSQL Datenbanken"]},{"n":"1.11.2","t":"Datenbankentwurf und Struktur","d":["ER-Modell","Attribute, Beziehungen, Kardinalitäten","Referenzielle Integrität","Aktualisierungsweitergabe, Löschweitergabe","Primärschlüssel, Fremdschlüssel","Anomalien, Redundanzen","Normalisieren (1. bis 3. Normalform)","Index","Datenpflege"]},{"n":"1.11.3","t":"Datentypen","d":["Boolesche Werte","Ganzzahl, Gleitkommawerte","Währung","Datumswerte","Texte fester und variabler Länge","BLOB","Geokoordinaten","CHARACTER, CHAR, VARCHAR","DECIMAL, DOUBLE, INTEGER","DATE"]},{"n":"1.11.4","t":"Schnittstellen","d":["OpenData","API-Schnittstellen"]},{"n":"1.11.5","t":"SQL - Datendefinition und Rechte","d":["CREATE TABLE, ALTER TABLE, DROP TABLE","CREATE USER, GRANT, REVOKE","PRIMARY KEY, FOREIGN KEY, REFERENCES","ALTER TABLE ADD COLUMN, DROP COLUMN, MODIFY COLUMN"]},{"n":"1.11.6","t":"SQL - Datenmanipulation","d":["INSERT INTO","UPDATE","DELETE"]},{"n":"1.11.7","t":"SQL - Abfragen","d":["SELECT, FROM, WHERE, DISTINCT","JOIN, INNER JOIN, LEFT JOIN, RIGHT JOIN","EXISTS, IN","GROUP BY, HAVING","ORDER BY, ASC, DESC","UNION","Projektion (Spalten) vs. Selektion (Zeilen)","Unterabfragen (Subquery, AS)","Abfragen über mehrere Tabellen"]},{"n":"1.11.8","t":"SQL - Operatoren","d":["AND, OR, NOT","IS NULL","LIKE mit Platzhaltern % und _","=, \u003c\u003e, \u003c, \u003e, \u003c=, \u003e=","Rechenoperatoren + - * /"]},{"n":"1.11.9","t":"SQL - Funktionen","d":["Aggregat-Funktionen (AVG, COUNT, SUM, MIN, MAX, STDDEV, VARIANCE, CORR)","LEFT, RIGHT","NOW, YEAR, MONTH, WEEKDAY, DAY, HOUR, MINUTE, DATEADD, DATEDIFF"]}]},{"n":"1.12","t":"Recht","s":[{"n":"1.12.1","t":"Vertragsarten","d":["Kaufvertrag","Werkvertrag","Dienstvertrag","Pachtvertrag","Leasing","Mietvertrag","EVB-IT","SLA (Service Level Agreement)","Serviceverträge","Software-Abo"]},{"n":"1.12.2","t":"Angebote","d":["Verbindliche und unverbindliche Angebote","Befristete Angebote","Freizeichnungsklauseln","Inhalte eines Angebots","Technische Spezifikationen, Leistungsbeschreibung"]},{"n":"1.12.3","t":"Vollmachten","d":["Handlungsvollmacht (allgemeine, Art-, Einzelvollmacht)","Prokura","Elektronische Genehmigungsverfahren"]},{"n":"1.12.4","t":"Gesetze und Regelungen","d":["BGB, HGB","Gesetz gegen unlauteren Wettbewerb (UWG)","AGB-Recht (§§ 305 ff. BGB, früher AGB-Gesetz)","Compliance","Lieferkettengesetz"]},{"n":"1.12.5","t":"Vertragsinhalte und Störungen","d":["Lieferbedingungen","Zahlungsbedingungen","Eigentumsvorbehalt","Erfüllungsort, Gerichtsstand","Gewährleistung, Garantie, Kulanz","Verjährung von Ansprüchen","Nicht-Rechtzeitig-Lieferung","Schlechtleistung","Mängelarten","Preisverhandlungen, Vertragsgestaltung"]}]},{"n":"1.13","t":"Beschaffung","s":[{"n":"1.13.1","t":"Beschaffungsplanung","d":["Einkaufs-, Markt- und Supply-Strategien","KPI-Beschaffung","Beschaffungsprozess (strategisch/operativ)","Bestellmengenplanung","Terminplanung","Beschaffungsarten","Kanban","Disposition"]},{"n":"1.13.2","t":"Analysen und Vorgaben","d":["ABC-Analyse","Einkaufsrichtlinien","Rahmenverträge","Bestellanforderung (BANF)","Istaufnahme","Lagerbestandsgrößen","Prediktive Analysis","Einkaufsportfolio","TCO (Total Cost of Ownership)","Fremd- und Eigenbezug","Energieeffizienz als Kriterium","Nachhaltigkeit (Remarketing, Refurbishing, Recycling)","Beschaffungsrichtlinien"]},{"n":"1.13.3","t":"Anfrage und Angebot","d":["Request for Information (RFI)","Request for Proposal (RFP)","Anfragearten","Angebotseinholung","Ausschreibungsplattformen"]},{"n":"1.13.4","t":"Lieferantenmanagement","d":["Beschaffungskanäle","Informationsdienste","Lieferantenbewertung","Lieferantenauswahl","Supply-Chain-Kollaboration"]},{"n":"1.13.5","t":"Digitale Beschaffung","d":["eSourcing","eAuctions","Online-Marktplätze","Intelligente Beschaffungssysteme","Automatisierung und Orchestrierung"]},{"n":"1.13.6","t":"Entscheidungsfindung","d":["Quantitativer und qualitativer Angebotsvergleich","Nutzwertanalyse","Präferenzmatrix"]},{"n":"1.13.7","t":"Logistik und Wareneingang","d":["Lieferlogistik","Avis","Tracking","Warenabnahme","Einseitiger/zweiseitiger Handelskauf","Transportschäden","RMA-Formular","Lagerprozess"]},{"n":"1.13.8","t":"Abrechnung und Mahnwesen","d":["Rechnungsprüfung","eInvoicing","Erinnerungs- und Mahnschreiben","Zahlungsarten","Provisionen, Rückvergütungen"]},{"n":"1.13.9","t":"Vertragsstörungen vermeiden","d":["Qualitätsvorausplanung","PLM","Supply Chain Collaboration"]}]},{"n":"1.14","t":"Kundenberatung \u0026 Kommunikation","s":[{"n":"1.14.1","t":"Präsentation","d":["Präsentationstechnik","Diagrammarten, Visualisierung","Corporate Identity (CI)","Multiperspektivische Leistungspräsentation (technisch, kaufmännisch, Nachhaltigkeit)"]},{"n":"1.14.2","t":"Konfliktmanagement","d":["Kommunikationsmodelle (4-Ohren-Modell, Sender-Empfänger-Modell)","Kommunikationsregeln","Perspektivwechsel","Aktives Zuhören, gezielte Nachfragen","Auftragsklärung","Konfliktvermeidung, Deeskalationsstrategien"]},{"n":"1.14.3","t":"Reklamationen und Service","d":["Serviceanfragen","Kundenreklamationen und geeignete Maßnahmen","Service-Management-System","Service-Level-Agreement"]},{"n":"1.14.4","t":"Produktschulungen","d":["Schulungsarten","Schulungsmethoden","Schulungsdurchführung"]}]},{"n":"1.15","t":"Qualitätsmanagement \u0026 Leistungskontrolle","s":[{"n":"1.15.1","t":"Qualitätsmanagement","d":["PDCA-Zyklus","KVP (Kontinuierlicher Verbesserungsprozess)","Kennzahlen"]},{"n":"1.15.2","t":"Kontrolle der Leistungserbringung","d":["Soll-Ist-Vergleich, Abweichungen berechnen","Testprotokolle","Abnahmeprotokoll"]},{"n":"1.15.3","t":"Prüfverfahren","d":["Parität","Redundanz"]}]}]},{"t":"Klausur 3: Wirtschafts- und Sozialkunde","b":[{"n":"1.16","t":"Berufsbildung sowie Arbeits- und Tarifrecht","s":[{"n":"1.16.1","t":"Berufsbildung","d":["Ausbildungsvertrag (Vertragspartner, Beginn und Dauer, Probezeit, Vergütungs- und Urlaubsregelungen, Kündigungsbedingungen)","Berufsbildungsgesetz","Duales System (Betrieb und Berufsschule)","Lebensbegleitendes Lernen","Fortbildung, Umschulung","Rechte und Pflichten von Auszubildenden und Ausbildenden, Folgen bei Verstoß","Ausbildungsordnung, Ausbildungsrahmenplan, Rahmenlehrplan, betrieblicher Ausbildungsplan","Aufgaben von Ausbildungsbetrieb, Berufsschule und Kammern","Berufsschulpflicht, Freistellung zur Prüfung","Beendigung der Ausbildung"]},{"n":"1.16.2","t":"Arbeitnehmerschutzgesetze","d":["Arbeitsschutzgesetz","Bundeselterngeld- und Elternzeitgesetz (BEEG)","Allgemeines Gleichbehandlungsgesetz","Kündigungsschutzgesetz","Jugendarbeitsschutzgesetz","Arbeitsstättenverordnung","Arbeitszeitgesetz","Mutterschutzgesetz","Schwerbehindertenrecht (heute SGB IX)","Individual- und Kollektivarbeitsrecht","Betriebsvereinbarungen"]},{"n":"1.16.3","t":"Mitbestimmung","d":["Betriebsverfassungsgesetz","Betriebsrat","Jugend- und Auszubildendenvertretung","Wahl und Zusammensetzung des Betriebsrats","Mitbestimmungs- vs. Mitwirkungsrechte","Betriebsversammlung","Einigungsstelle"]},{"n":"1.16.4","t":"Tarifrecht","d":["Tarifverträge","Tarifautonomie","Tarifverhandlung","Arbeitskampf","Schlichtung","Tarifbindung","Geltungsbereich, Laufzeit","Arbeitgeberverbände"]},{"n":"1.16.5","t":"Entgelt","d":["Lohn- und Gehaltsformen","Brutto/Netto","Lohnsteuer, Kirchensteuer","Sozialabgaben","Vermögenswirksame Leistungen","Sozialversicherung (Zweige und Träger)"]},{"n":"1.16.6","t":"Weiterbildung und Lernen","d":["Erhaltungs-, Anpassungs-, Aufstiegsfortbildung","Staatliche Fördermaßnahmen","Lerntechniken (visuell, auditiv, motorisch, kommunikativ)","Arbeitstechniken (Zeitmanagement, Moderation, Präsentation)","Digitale Lernmedien (CBT, WBT)","Europass, Mobilitätsprogramme, Europäische Sozialcharta","Potenzialanalyse, Karriereplanung","Möglichkeiten und Grenzen einer Existenzgründung"]}]},{"n":"1.17","t":"Aufbau und Organisation des Ausbildungsbetriebes","s":[{"n":"1.17.1","t":"Wirtschaft und Märkte","d":["Wirtschaftssektoren (primärer, sekundärer, tertiärer Sektor)","Globalisierung","Soziale Marktwirtschaft","Branchenzugehörigkeit, erwerbswirtschaftliche Betriebe","Betriebliche und gesamtwirtschaftliche Arbeitsteilung"]},{"n":"1.17.2","t":"Rechtsformen","d":["Gesellschaft bürgerlichen Rechts (GbR)","Einzelunternehmung","KG, OHG, GmbH \u0026 Co. KG","GmbH, AG","Gemeinnützige Organisationen"]},{"n":"1.17.3","t":"Unternehmensstruktur","d":["Einliniensystem, Mehrliniensystem, Stabliniensystem","Spartenorganisation","Matrixorganisation","Arbeitsabläufe, Aufgabenteilung"]},{"n":"1.17.4","t":"Wirtschaftliche Verflechtungen","d":["Konzern","Kartell","Fusion"]},{"n":"1.17.5","t":"Unternehmensziele","d":["Produktivität","Wirtschaftlichkeit","Rentabilität","Zielkonflikte"]},{"n":"1.17.6","t":"Interessenvertretungen","d":["Arbeitgeberverbände","Arbeitnehmerverbände","Industrie- und Handelskammern (IHK)","Gewerkschaften","Wirtschaftsorganisationen, berufsständische Vertretungen","Ehrenamtliche Mitwirkung (z. B. Prüfungsausschuss)","Ziele und Aufgaben von Behörden und Verwaltungen","Vertrauensvolle Zusammenarbeit (BetrVG)","Personalvertretungsgesetz"]}]},{"n":"1.18","t":"Sicherheit und Gesundheitsschutz bei der Arbeit","s":[{"n":"1.18.1","t":"Vorschriften","d":["Arbeitssicherheitsgesetz","Betriebssicherheitsverordnung","Unfallverhütungsvorschriften (UVV)","Bildschirmarbeitsplatzverordnung","Arbeitsschutzgesetz, Arbeitszeitgesetz, Arbeitsstättenverordnung","Jugendarbeitsschutzgesetz","Aufsichtsbehörde (Gewerbeaufsicht)"]},{"n":"1.18.2","t":"Gefährdungen","d":["Mechanisch, elektrisch, thermisch, chemisch","Ergonomisch, akustisch, psychisch","Besondere Fürsorgepflicht des Arbeitgebers","Gefahren beachten und melden"]},{"n":"1.18.3","t":"Gesundheitsschutz","d":["Ergonomische Arbeitsplatzgestaltung","Vorsorgeuntersuchungen (Augenuntersuchung, psychische Gefährdungsbeurteilung)","Aufgaben der Sicherheitsbeauftragten"]},{"n":"1.18.4","t":"Sicherheitsvorkehrungen","d":["Schutzarten","Schutzklassen","CE-Zeichen","Fluchtwege","Sammelplätze","Prüfzeichen","Sicherheitszeichen, Schriften und Farben des Arbeitsschutzes","Notausgänge"]},{"n":"1.18.5","t":"Brandschutz","d":["Brandschutzklassen A, B, C, D","Feuerlöscher","Brandschutzordnung","Brandursachen","Verhalten im Brandfall (kein Aufzug, Türen und Fenster schließen)","Löschdecke","Brandmeldung"]},{"n":"1.18.6","t":"Erste Hilfe","d":["Ersthelfer","Notruf","Meldeketten","Meldepflicht von Unfällen","Evakuierung und Dokumentation"]},{"n":"1.18.7","t":"IT-Sicherheit am Arbeitsplatz","d":["BSI Vorgaben","Technisch organisatorische Maßnahmen (TOM)","Schutzziele (Verfügbarkeit, Integrität, Vertraulichkeit, Authentizität)","Ziele der DSGVO","Aufgaben des BSI","Betriebliches IT-Sicherheitskonzept"]}]},{"n":"1.19","t":"Umweltschutz","s":[{"n":"1.19.1","t":"Ressourcenmanagement","d":["Rationelle Energie- und Ressourcenverwendung","Regenerative Energien","Unnötige Gerätelaufzeiten vermeiden","Umgang mit Speicher- und Printmedien","Roh-, Hilfs- und Betriebsstoffe","Nachhaltigkeit bei Einkauf und Lieferantenauswahl"]},{"n":"1.19.2","t":"Abfallwirtschaft","d":["Wiederverwertung (Recycling)","Abfalltrennung","Duales System","Abfallvermeidung und -reduzierung","Branchenspezifische Abfälle (Erfassung, Lagerung, Entsorgung von Datenträgern und Kabeln)"]},{"n":"1.19.3","t":"Rechtliches","d":["Immissionsschutzgesetz","Technische Anleitungen (TA Lärm, Luft, Abfall)","Rechtsfolgen bei Nichteinhaltung"]},{"n":"1.19.4","t":"Risiken der IT","d":["Spezifische Risiken von IT-Prozessen (z. B. USV-Anlagen)"]},{"n":"1.19.5","t":"Nachhaltigkeit","d":["Schutz von Umwelt, Pflanzen, Tieren, Lebensräumen"]}]},{"n":"1.20","t":"Vernetztes Zusammenarbeiten unter Nutzung digitaler Medien","s":[{"n":"1.20.1","t":"Kommunikation","d":["Interdisziplinarität","Interkulturalität","Netiquette","Sicherer Umgang mit dienstlichen E-Mails","Sensibler Umgang mit Adressatenlisten (CC/BCC)"]},{"n":"1.20.2","t":"Risiken","d":["Social Media Gefahren","Social Engineering","Äußerungen über den Arbeitgeber in sozialen Netzwerken","Sicherheitsbewusstsein im privaten und betrieblichen Bereich"]},{"n":"1.20.3","t":"Werte und Richtlinien","d":["Ethische Aspekte","Compliance-Regelungen","Diversity","Gender-Neutralität","Unternehmenswerte, betriebliche Ethikregeln"]}]}]}];
+const EXAM = new Date(2026, 10, 25);
+const LS_STATE = 'ap2-lernstand-v1', LS_UI = 'ap2-lernstand-ui-v1';
+const AMP_PTS = { r: 0, y: 1.5, g: 3 };
+const AMP_NAME = { r: 'Rot', y: 'Gelb', g: 'Grün' };
+const STEPS = [['a', 'Angeschaut'], ['l', 'Lernzettel'], ['u', 'Aufgaben']];
+const PIN_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 1.5h5l-.8 4.2 2.8 2.8v1H8.6V15h-1.2V9.5H3.5v-1l2.8-2.8z"/></svg>';
+
+// ---------- Daten indexieren ----------
+// Nummerierung wie im Word: Klausur.Block.Unterthema (2.1, 2.1.1 …); OLD_IDS bildet die erste Version (1.9, 1.9.1 …) ab
+const TOPICS = [], BLOCKS = [], BY = {}, OLD_IDS = {};
+DATA.forEach((k, ki) => {
+  k.i = String(ki + 1);
+  k.name = k.t.replace(/^Klausur \d+:\s*/, '');
+  k.b.forEach((b, bi) => {
+    const oldB = b.n; b.n = k.i + '.' + (bi + 1); OLD_IDS[oldB] = b.n;
+    b.k = k; BLOCKS.push(b); BY[b.n] = b;
+    b.s.forEach((s, si) => {
+      const old = s.n; s.n = b.n + '.' + (si + 1); OLD_IDS[old] = s.n;
+      s.b = b; s.k = k; TOPICS.push(s); BY[s.n] = s;
+      s.hay = (s.n + ' ' + s.t + ' ' + s.d.join(' ') + ' ' + b.t).toLowerCase();
+    });
+  });
+});
+const DET_TOTAL = TOPICS.reduce((a, s) => a + s.d.length, 0);
+
+// ---------- Speicher ----------
+function lsGet(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+function normalize(s) {
+  s = s && typeof s === 'object' ? s : {};
+  let t = s.t && typeof s.t === 'object' ? s.t : {};
+  let d = s.d && typeof s.d === 'object' ? s.d : {};
+  let p = Array.isArray(s.p) ? s.p : [];
+  if (s.v !== 2) {
+    const mapKeys = o => Object.fromEntries(Object.entries(o).filter(([k]) => OLD_IDS[k]).map(([k, v]) => [OLD_IDS[k], v]));
+    t = mapKeys(t); d = mapKeys(d); p = p.map(x => OLD_IDS[x]);
+  }
+  return { v: 2, t, d, p: p.filter(x => BY[x]) };
+}
+let state = normalize(lsGet(LS_STATE));
+const uiSaved = lsGet(LS_UI) || {};
+const ui = {
+  k: uiSaved.k || 'all', b: uiSaved.b || 'all', st: uiSaved.st || 'all', amp: uiSaved.amp || 'all',
+  pin: !!uiSaved.pin, q: '', theme: uiSaved.theme || 'auto',
+  col: new Set(uiSaved.col || []), flip: new Set(), noteEdit: new Set()
+};
+function saveUi() { lsSet(LS_UI, { k: ui.k, b: ui.b, st: ui.st, amp: ui.amp, pin: ui.pin, theme: ui.theme, col: [...ui.col] }); }
+
+let dbRef = null, saving = false, dirty = false, timer = null;
+function setSync(s) {
+  const el = document.getElementById('sync');
+  el.dataset.s = s;
+  el.textContent = { local: 'Nur auf diesem Gerät gespeichert', pending: 'Speichert …', saved: 'Gespeichert · alle Geräte', err: 'Speichern fehlgeschlagen' }[s] || '';
+}
+function commit() {
+  lsSet(LS_STATE, state);
+  if (!dbRef) return;
+  dirty = true; setSync('pending');
+  clearTimeout(timer); timer = setTimeout(flush, 700);
+}
+async function flush() {
+  timer = null;
+  if (!dbRef || !dirty) return;
+  if (saving) { timer = setTimeout(flush, 400); return; }
+  saving = true; dirty = false;
+  try {
+    await dbRef.set({ state: JSON.parse(JSON.stringify(state)), updated: Date.now() });
+    if (!dirty) setSync('saved');
+  } catch (e) {
+    if (e && e.code === 'unavailable') { dirty = true; timer = setTimeout(flush, 1500 + Math.random() * 1500); }
+    else setSync('err');
+  } finally { saving = false; }
+  if (dirty && !timer) timer = setTimeout(flush, 400);
+}
+async function connect() {
+  if (!window.claude || !window.claude.use) { setSync('local'); return; }
+  try {
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    const id = user ? await user.id() : null;
+    if (!db || !id) { setSync('local'); return; }
+    dbRef = db.doc('data/users/' + id + '/state');
+    let first = true;
+    dbRef.onSnapshot(snap => {
+      if (snap.metadata.hasPendingWrites || dirty || saving) return;
+      if (!snap.exists) {
+        if (first && (Object.keys(state.t).length || Object.keys(state.d).length || state.p.length)) commit();
+        else setSync('saved');
+        first = false; return;
+      }
+      first = false;
+      const inc = normalize((snap.data() || {}).state);
+      if (JSON.stringify(inc) !== JSON.stringify(state)) { state = inc; lsSet(LS_STATE, state); render(); }
+      setSync('saved');
+    }, () => setSync('err'));
+  } catch (e) { setSync('local'); }
+}
+
+// ---------- Logik ----------
+const T = id => state.t[id] || {};
+function setT(id, patch) {
+  const cur = Object.assign({}, T(id), patch);
+  Object.keys(cur).forEach(k => { if (!cur[k]) delete cur[k]; });
+  if (Object.keys(cur).length) state.t[id] = cur; else delete state.t[id];
+}
+const score = id => { const t = T(id); return ((t.a ? 1 : 0) + (t.l ? 1 : 0) + (t.u ? 2 : 0) + (AMP_PTS[t.r] || 0)) / 7; };
+const isDone = id => { const t = T(id); return !!(t.a && t.l && t.u && t.r === 'g'); };
+const avg = list => list.length ? list.reduce((a, s) => a + score(s.n), 0) / list.length : 0;
+const pct = x => Math.round(x * 100);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const isPinned = id => state.p.includes(id);
+const qWords = () => ui.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+const bar = (x, cls) => `<div class="bar ${cls || ''}"><i style="width:${pct(x)}%"></i></div>`;
+
+function matches(s) {
+  const t = T(s.n);
+  if (ui.k !== 'all' && s.k.i !== ui.k) return false;
+  if (ui.b !== 'all' && s.b.n !== ui.b) return false;
+  if (ui.st === 'open' && isDone(s.n)) return false;
+  if (ui.st === 'done' && !isDone(s.n)) return false;
+  if (ui.st === 'na' && t.a) return false;
+  if (ui.st === 'nl' && t.l) return false;
+  if (ui.st === 'nu' && t.u) return false;
+  if (ui.amp === 'none' && t.r) return false;
+  if (ui.amp !== 'all' && ui.amp !== 'none' && t.r !== ui.amp) return false;
+  if (ui.pin && !isPinned(s.n) && !isPinned(s.b.n)) return false;
+  const q = qWords();
+  if (q.length) { const h = s.hay + ' ' + (t.n || '').toLowerCase(); if (!q.every(w => h.includes(w))) return false; }
+  return true;
+}
+
+// ---------- Rendering ----------
+function renderCount() {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Math.round((EXAM - today) / 864e5);
+  const open = TOPICS.filter(s => !isDone(s.n)).length;
+  const dateStr = EXAM.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  let pace;
+  if (days > 0) {
+    pace = open ? `Noch ${open} von ${TOPICS.length} Unterthemen offen. Das sind etwa ${(open / days).toFixed(1).replace('.', ',')} Unterthemen pro Tag, um bis zur Prüfung alles auf Grün zu haben.`
+                : 'Alle Unterthemen sind fertig. Jetzt nur noch wiederholen.';
+  } else pace = 'Der Prüfungstermin ist erreicht.';
+  const ring = 'AP2 · LERNSTAND · DREI KLAUSUREN · ' + TOPICS.length + ' UNTERTHEMEN · ';
+  document.getElementById('count').innerHTML =
+    `<div class="hero">
+       <h1>Lernstand<br>AP2 ${EXAM.getFullYear()}</h1>
+       <svg class="orn" viewBox="0 0 160 160" aria-hidden="true"><defs><path id="ring" d="M80,80 m-62,0 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"/></defs>
+         <text><textPath href="#ring" textLength="388" lengthAdjust="spacing">${ring}</textPath></text>
+         <circle cx="80" cy="80" r="5" fill="currentColor"/></svg>
+     </div>
+     <hr class="rule">
+     <div class="intro"><p class="tn">${pace}</p><span class="date">Prüfung<br>${esc(dateStr)}</span></div>
+     <hr class="rule">
+     <div class="mark"><p class="num tn">${Math.max(days, 0)}<small> ${days === 1 ? 'Tag' : 'Tage'}</small></p>${statsHTML()}</div>`;
+}
+
+function statsHTML() {
+  const cnt = f => TOPICS.filter(s => T(s.n)[f]).length;
+  const green = TOPICS.filter(s => T(s.n).r === 'g').length;
+  const det = Object.values(state.d).reduce((a, x) => a + (Array.isArray(x) ? x.length : 0), 0);
+  const rows = [...STEPS.map(([f, n]) => [n, cnt(f), TOPICS.length]), ['Grün', green, TOPICS.length], ['Stichpunkte', det, DET_TOTAL]];
+  return `<table class="spec tn"><tbody>${rows.map(([n, v, of]) => `<tr><td>${n}</td><td>${v} / ${of}</td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderOverview() {
+  const all = avg(TOPICS);
+  let h = `<div class="tot"><span>Gesamt</span><span class="big tn">${pct(all)} %</span>${bar(all)}</div>`;
+  DATA.forEach(k => {
+    const v = avg(k.b.flatMap(b => b.s));
+    h += `<div class="ovk"><div class="ovk-h"><h3>Klausur ${k.i} <span>${esc(k.name)}</span></h3><span class="p tn">${pct(v)} %</span></div>
+      <div class="blocks">${k.b.map(b => {
+        const bv = avg(b.s);
+        return `<button class="bk" type="button" data-act="bshow" data-b="${b.n}"><span class="num-s tn">${b.n}</span><span class="t">${esc(b.t)}</span><span class="tn">${pct(bv)} %</span>${bar(bv)}</button>`;
+      }).join('')}</div></div>`;
+  });
+  document.getElementById('ov').innerHTML = h;
+}
+
+function rowHTML(s, ctx) {
+  const t = T(s.n), key = ctx + ':' + s.n, fk = a => `data-fk="${key}|${a}"`;
+  const checked = state.d[s.n] || [];
+  const q = qWords();
+  const hitIdx = q.length ? s.d.map((x, i) => q.some(w => x.toLowerCase().includes(w)) ? i : -1).filter(i => i >= 0) : [];
+  const open = (hitIdx.length > 0) !== ui.flip.has(key);
+  let h = `<div class="row" data-id="${s.n}" data-ctx="${ctx}" data-row="${key}">
+    <div class="r-line">
+      <button type="button" class="r-main" data-act="exp" ${fk('exp')} aria-expanded="${open}">
+        <span class="num">${s.n}</span><span class="ttl">${esc(s.t)}</span>
+        ${s.d.length ? `<span class="dc tn">${checked.length}/${s.d.length}</span>` : ''}
+      </button>
+      <div class="ctl">
+        ${STEPS.map(([f, n]) => `<button type="button" class="ck" data-act="ck" data-f="${f}" ${fk('ck' + f)} aria-pressed="${!!t[f]}" aria-label="${n}"><span class="box"></span><span class="lbl">${n}</span></button>`).join('')}
+        <span class="amp" role="group" aria-label="Selbsteinschätzung">
+          ${['r', 'y', 'g'].map(v => `<button type="button" class="dot ${v}" data-act="amp" data-v="${v}" ${fk('amp' + v)} aria-pressed="${t.r === v}" aria-label="Ampel ${AMP_NAME[v]}" title="${AMP_NAME[v]}"></button>`).join('')}
+        </span>
+        <button type="button" class="pin" data-act="pin" ${fk('pin')} aria-pressed="${isPinned(s.n)}" aria-label="${isPinned(s.n) ? 'Lösen' : 'Anheften'}" title="${isPinned(s.n) ? 'Lösen' : 'Anheften'}">${PIN_SVG}</button>
+      </div>
+    </div>`;
+  if (t.n && !open) h += `<p class="note">${esc(t.n)}</p>`;
+  if (open) {
+    h += '<div class="more">';
+    if (s.d.length) {
+      h += '<ul class="det">' + s.d.map((x, i) => {
+        const on = checked.includes(i);
+        return `<li class="${hitIdx.includes(i) ? 'hit' : ''}"><button type="button" class="dk" data-act="det" data-i="${i}" ${fk('det' + i)} aria-pressed="${on}"><span class="box"></span><span class="tx">${esc(x)}</span></button></li>`;
+      }).join('') + '</ul>';
+    }
+    const editing = t.n || ui.noteEdit.has(s.n);
+    if (editing) h += `<textarea data-act="note" ${fk('note')} id="note-${ctx}-${s.n.replace(/\./g, '-')}" aria-label="Notiz zu ${esc(s.t)}" placeholder="Notiz …">${esc(t.n || '')}</textarea>`;
+    h += '<div class="more-act">';
+    if (s.d.length) h += `<button type="button" data-act="detall" ${fk('detall')}>${checked.length === s.d.length ? 'Alle Stichpunkte abwählen' : 'Alle Stichpunkte abhaken'}</button>`;
+    if (!editing) h += `<button type="button" data-act="addnote" ${fk('addnote')}>+ Notiz hinzufügen</button>`;
+    h += '</div></div>';
+  }
+  return h + '</div>';
+}
+
+const COLH = `<div class="colh" aria-hidden="true"><span></span><div class="ctl head"><span>Angeschaut</span><span>Lernzettel</span><span>Aufgaben</span><span>Ampel</span><span></span></div></div>`;
+
+function blockHead(b, ctx) {
+  const collapsed = ui.col.has(b.n);
+  return `<div class="bh">
+    <button type="button" class="bcol" data-act="bcol" data-b="${b.n}" data-fk="${ctx}:${b.n}|bcol" aria-expanded="${!collapsed}" aria-label="Block ein- oder ausklappen">▾</button>
+    <span class="num">${b.n}</span><h3>${esc(b.t)}</h3><span class="p tn">${pct(avg(b.s))} %</span>
+    <button type="button" class="pin" data-act="bpin" data-b="${b.n}" data-fk="${ctx}:${b.n}|bpin" aria-pressed="${isPinned(b.n)}" title="${isPinned(b.n) ? 'Lösen' : 'Block anheften'}" aria-label="${isPinned(b.n) ? 'Block lösen' : 'Block anheften'}">${PIN_SVG}</button>
+  </div>${bar(avg(b.s))}`;
+}
+
+function renderPinned() {
+  const pb = state.p.filter(x => BY[x] && BY[x].s);
+  const ps = state.p.filter(x => BY[x] && BY[x].d).sort((a, b) => TOPICS.indexOf(BY[a]) - TOPICS.indexOf(BY[b]));
+  let h = '';
+  document.getElementById('pinned').hidden = !pb.length && !ps.length;
+  if (pb.length) h += '<div class="pblocks">' + pb.map(n => {
+    const b = BY[n], v = avg(b.s);
+    return `<div class="pb"><span><span class="num">${b.n}</span> ${esc(b.t)}</span><span class="tn muted">${pct(v)} %</span>
+      <button type="button" class="pin" data-act="bpin" data-b="${b.n}" data-fk="PB:${b.n}|bpin" aria-pressed="true" title="Lösen" aria-label="Block lösen">${PIN_SVG}</button>
+      ${bar(v)}<button type="button" class="go" data-act="bshow" data-b="${b.n}">Im Block anzeigen</button></div>`;
+  }).join('') + '</div>';
+  if (ps.length) h += COLH + ps.map(n => rowHTML(BY[n], 'P')).join('');
+  document.getElementById('pins').innerHTML = h;
+}
+
+function renderList() {
+  let h = '', shown = 0;
+  DATA.forEach(k => {
+    const blocks = k.b.map(b => ({ b, subs: b.s.filter(matches) })).filter(x => x.subs.length);
+    if (!blocks.length) return;
+    h += `<div class="kh"><h2>Klausur ${k.i} <span>${esc(k.name)}</span></h2><span class="p tn">${pct(avg(k.b.flatMap(b => b.s)))} %</span></div>` + COLH;
+    blocks.forEach(({ b, subs }) => {
+      shown += subs.length;
+      h += blockHead(b, 'L');
+      if (!ui.col.has(b.n)) h += subs.map(s => rowHTML(s, 'L')).join('');
+    });
+  });
+  document.getElementById('list').innerHTML = h || '<p class="none">Keine Unterthemen passen zu diesen Filtern.</p>';
+  document.getElementById('f-count').textContent = `${shown} von ${TOPICS.length} Unterthemen`;
+}
+
+function syncFilters() {
+  document.getElementById('f-k').innerHTML = [['all', 'Alle'], ['1', 'Klausur 1'], ['2', 'Klausur 2'], ['3', 'Klausur 3']]
+    .map(([v, n]) => `<button type="button" data-k="${v}" aria-pressed="${ui.k === v}">${n}</button>`).join('');
+  const bs = BLOCKS.filter(b => ui.k === 'all' || b.k.i === ui.k);
+  if (ui.b !== 'all' && !bs.some(b => b.n === ui.b)) ui.b = 'all';
+  const sel = document.getElementById('f-b');
+  sel.innerHTML = '<option value="all">Alle Blöcke</option>' + bs.map(b => `<option value="${b.n}">${b.n} ${esc(b.t)}</option>`).join('');
+  sel.value = ui.b;
+  document.getElementById('f-st').value = ui.st;
+  document.getElementById('f-amp').value = ui.amp;
+  document.getElementById('f-pin').setAttribute('aria-pressed', ui.pin);
+}
+
+function render() {
+  const fk = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.fk : null;
+  renderCount(); renderOverview(); renderPinned(); syncFilters(); renderList();
+  if (fk) { const el = document.querySelector(`[data-fk="${CSS.escape(fk)}"]`); if (el) el.focus({ preventScroll: true }); }
+}
+
+// ---------- Interaktion ----------
+document.addEventListener('click', e => {
+  const kb = e.target.closest('#f-k [data-k]');
+  if (kb) { ui.k = kb.dataset.k; saveUi(); syncFilters(); renderList(); return; }
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act, row = el.closest('[data-id]');
+  const id = row && row.dataset.id, key = row && row.dataset.row;
+  switch (act) {
+    case 'exp': ui.flip.has(key) ? ui.flip.delete(key) : ui.flip.add(key); render(); return;
+    case 'ck': setT(id, { [el.dataset.f]: !T(id)[el.dataset.f] }); break;
+    case 'amp': setT(id, { r: T(id).r === el.dataset.v ? '' : el.dataset.v }); break;
+    case 'pin': state.p = isPinned(id) ? state.p.filter(x => x !== id) : [...state.p, id]; break;
+    case 'bpin': { const b = el.dataset.b; state.p = isPinned(b) ? state.p.filter(x => x !== b) : [...state.p, b]; break; }
+    case 'det': {
+      const i = +el.dataset.i, cur = new Set(state.d[id] || []);
+      cur.has(i) ? cur.delete(i) : cur.add(i);
+      if (cur.size) state.d[id] = [...cur].sort((a, b) => a - b); else delete state.d[id];
+      break;
+    }
+    case 'detall': {
+      const s = BY[id];
+      if ((state.d[id] || []).length === s.d.length) delete state.d[id]; else state.d[id] = s.d.map((_, i) => i);
+      break;
+    }
+    case 'addnote': {
+      ui.noteEdit.add(id); render();
+      const ta = document.querySelector(`[data-row="${key}"] textarea`); if (ta) ta.focus();
+      return;
+    }
+    case 'bcol': { const b = el.dataset.b; ui.col.has(b) ? ui.col.delete(b) : ui.col.add(b); saveUi(); renderList(); return; }
+    case 'bshow': {
+      const b = BY[el.dataset.b];
+      Object.assign(ui, { k: b.k.i, b: b.n, st: 'all', amp: 'all', pin: false, q: '' });
+      ui.col.delete(b.n); document.getElementById('f-q').value = '';
+      saveUi(); syncFilters(); renderList();
+      document.getElementById('themen').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    case 'goto': {
+      const s = BY[el.dataset.id];
+      Object.assign(ui, { k: s.k.i, b: s.b.n, st: 'all', amp: 'all', pin: false, q: '' });
+      ui.col.delete(s.b.n); document.getElementById('f-q').value = '';
+      if (!ui.flip.has('L:' + s.n)) ui.flip.add('L:' + s.n);
+      saveUi(); render();
+      const r = document.querySelector(`[data-row="L:${CSS.escape(s.n)}"]`);
+      if (r) { r.scrollIntoView({ behavior: 'smooth', block: 'center' }); r.querySelector('.r-main').focus({ preventScroll: true }); }
+      return;
+    }
+    default: return;
+  }
+  commit(); render();
+});
+
+document.addEventListener('input', e => {
+  if (e.target.dataset && e.target.dataset.act === 'note') {
+    const id = e.target.closest('[data-id]').dataset.id;
+    setT(id, { n: e.target.value });
+    commit();
+  }
+});
+document.addEventListener('focusout', e => {
+  if (e.target.dataset && e.target.dataset.act === 'note') {
+    const id = e.target.closest('[data-id]').dataset.id;
+    if (!e.target.value.trim()) { setT(id, { n: '' }); commit(); }
+    ui.noteEdit.delete(id);
+  }
+});
+
+document.getElementById('f-b').addEventListener('change', e => { ui.b = e.target.value; saveUi(); renderList(); });
+document.getElementById('f-st').addEventListener('change', e => { ui.st = e.target.value; saveUi(); renderList(); });
+document.getElementById('f-amp').addEventListener('change', e => { ui.amp = e.target.value; saveUi(); renderList(); });
+document.getElementById('f-q').addEventListener('input', e => { ui.q = e.target.value; renderList(); });
+document.getElementById('f-pin').addEventListener('click', () => { ui.pin = !ui.pin; saveUi(); syncFilters(); renderList(); });
+document.getElementById('f-reset').addEventListener('click', () => {
+  Object.assign(ui, { k: 'all', b: 'all', st: 'all', amp: 'all', pin: false, q: '' });
+  document.getElementById('f-q').value = ''; saveUi(); syncFilters(); renderList();
+});
+
+// ---------- Darstellung ----------
+const root = document.documentElement, hostTheme = root.getAttribute('data-theme');
+function applyTheme() {
+  if (ui.theme === 'auto') { hostTheme ? root.setAttribute('data-theme', hostTheme) : root.removeAttribute('data-theme'); }
+  else root.setAttribute('data-theme', ui.theme);
+  document.getElementById('theme').textContent = 'Darstellung: ' + { auto: 'Auto', light: 'Hell', dark: 'Dunkel' }[ui.theme];
+}
+document.getElementById('theme').addEventListener('click', () => {
+  ui.theme = { auto: 'light', light: 'dark', dark: 'auto' }[ui.theme]; saveUi(); applyTheme();
+});
+
+applyTheme();
+render();
+connect();
+</script>
+
+</html>
